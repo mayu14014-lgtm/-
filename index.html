@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>メッシュアンケート</title>
+
+<style>
+body {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+#container {
+  position: relative;
+  width: 90vw;
+  max-width: 500px;
+  margin: auto;
+}
+
+#background {
+  width: 100%;
+}
+
+#grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(10, 1fr);
+}
+
+.cell {
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+.color-btn {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h3>好きな場所を塗ってください</h3>
+
+<!-- 色選択 -->
+<div>
+  <button class="color-btn" style="background:red" onclick="setColor('red')">好き</button>
+  <button class="color-btn" style="background:blue" onclick="setColor('blue')">落ち着く</button>
+  <button class="color-btn" style="background:yellow; color:black;" onclick="setColor('yellow')">よく使う</button>
+</div>
+
+<!-- 平面図＋グリッド -->
+<div id="container">
+  <img id="background" src="plan.png">
+  <div id="grid"></div>
+</div>
+
+<br>
+<button onclick="submitData()">送信</button>
+
+<script>
+let currentColor = "red";
+const grid = document.getElementById("grid");
+const data = [];
+
+// 色選択
+function setColor(color) {
+  currentColor = color;
+}
+
+// グリッド作成
+for (let i = 0; i < 100; i++) {
+  const cell = document.createElement("div");
+  cell.classList.add("cell");
+
+  cell.addEventListener("click", () => {
+    cell.style.backgroundColor = currentColor;
+    data[i] = currentColor;
+  });
+
+  grid.appendChild(cell);
+}
+
+// 送信（Googleフォームに送る）
+function submitData() {
+  const json = JSON.stringify(data);
+
+  // ↓ここ自分のフォームURLに変える
+  const url = "https://docs.google.com/forms/d/e/XXXXXXXX/formResponse";
+
+  const formData = new FormData();
+  formData.append("entry.1234567890", json);
+
+  fetch(url, {
+    method: "POST",
+    mode: "no-cors",
+    body: formData
+  });
+
+  alert("送信しました！");
+}
+</script>
+
+</body>
+</html>
